@@ -30,24 +30,24 @@ const NAV_ITEMS = [
     icon: Building2,
   },
   {
+    href: "/admin/jobs",
     label: "Job Openings",
     icon: BriefcaseBusiness,
-    disabled: true,
   },
   {
+    href: "/admin/drives",
     label: "Placement Drives",
     icon: CalendarDays,
-    disabled: true,
   },
   {
+    href: "/admin/applications",
     label: "Applications",
     icon: ClipboardList,
-    disabled: true,
   },
   {
+    href: "/admin/interviews",
     label: "Interviews",
     icon: FileText,
-    disabled: true,
   },
   {
     href: "/admin/reports",
