@@ -1,35 +1,6 @@
+"use client";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import StudentShell from "@/components/layout/StudentShell";
-
-export const metadata = {
-  title: "Job details | CampusPlacements",
-  description: "Placement opportunity details.",
-};
-
-/** Placeholder for opportunity “View Details” links from the dashboard. */
-export default function StudentJobDetailsPlaceholderPage() {
-  return (
-    <StudentShell title="Job details" breadcrumb="Student / Job details">
-      <div className="mx-auto max-w-2xl rounded-[12px] border border-border bg-card p-8 text-center shadow-sm">
-        <h2 className="text-xl font-semibold text-foreground">Job details</h2>
-        <p className="mt-2 text-sm text-secondary-text">
-          Detailed job view is not implemented yet.
-        </p>
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-          <Link
-            href="/student/jobs"
-            className="inline-flex rounded-[10px] border border-border bg-white px-4 py-2.5 text-sm font-medium text-primary outline-none transition hover:bg-background focus-visible:ring-2 focus-visible:ring-primary/40"
-          >
-            Browse Jobs
-          </Link>
-          <Link
-            href="/student/dashboard"
-            className="inline-flex rounded-[10px] bg-primary px-4 py-2.5 text-sm font-semibold text-white outline-none transition hover:bg-primary-hover focus-visible:ring-2 focus-visible:ring-primary/40"
-          >
-            Back to Overview
-          </Link>
-        </div>
-      </div>
-    </StudentShell>
-  );
-}
+import { StudentUnavailableState } from "@/components/student/StudentState";
+export default function StudentJobDetailsPage() { const { id } = useParams(); const message = id ? "Job details are unavailable because the backend does not expose a student job-details endpoint." : "The job ID is missing or invalid."; return <StudentShell title="Job details" breadcrumb="Student / Job details"><div className="mx-auto flex max-w-2xl flex-col gap-5"><StudentUnavailableState message={message} /><Link href="/student/jobs" className="self-center rounded-[10px] border border-border bg-card px-4 py-2.5 text-sm font-semibold text-primary hover:bg-background">Back to Browse Jobs</Link></div></StudentShell>; }

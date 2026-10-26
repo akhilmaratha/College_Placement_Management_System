@@ -1,9 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useId, useState, useSyncExternalStore } from "react";
 import { Eye, EyeOff, GraduationCap } from "lucide-react";
-import { AuthServiceError, login } from "@/services/authService";
+import {
+  AuthServiceError,
+  getDashboardPathForRole,
+  login,
+} from "@/services/authService";
 
 const REMEMBERED_EMAIL_KEY = "campusplacements.rememberedEmail";
 
@@ -26,6 +31,7 @@ function getRememberedEmailServerSnapshot() {
 }
 
 export default function LoginForm() {
+  const router = useRouter();
   const emailId = useId();
   const passwordId = useId();
   const rememberId = useId();
@@ -95,11 +101,23 @@ export default function LoginForm() {
 
     try {
       persistRememberedEmail(trimmedEmail);
-      await login({
+      const session = await login({
         email: trimmedEmail,
         password,
         rememberMe: rememberMeValue,
       });
+
+      const role = session?.user?.role ?? session?.role;
+      const dashboardPath = getDashboardPathForRole(role);
+
+      if (dashboardPath === "/login") {
+        throw new AuthServiceError(
+          "Your account role could not be determined. Please contact placement support.",
+          { code: "ROLE_NOT_FOUND" },
+        );
+      }
+
+      router.replace(dashboardPath);
     } catch (error) {
       const message =
         error instanceof AuthServiceError

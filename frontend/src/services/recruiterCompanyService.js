@@ -5,8 +5,6 @@
  * Mutations intentionally stay client-side — never pretend a backend save succeeded.
  */
 
-import { RECRUITER_COMPANY_MOCK } from "@/features/recruiter-company/data/recruiterCompanyMockData";
-
 export class RecruiterCompanyServiceError extends Error {
   constructor(message, { code = "RECRUITER_COMPANY_ERROR" } = {}) {
     super(message);
@@ -20,8 +18,15 @@ export class RecruiterCompanyServiceError extends Error {
  * @returns {Promise<typeof RECRUITER_COMPANY_MOCK>}
  */
 export async function fetchRecruiterCompany() {
-  await new Promise((resolve) => setTimeout(resolve, 350));
+  throw new RecruiterCompanyServiceError(
+    "Company profile data is unavailable because the backend recruiter company endpoint has not been implemented yet.",
+    { code: "API_NOT_IMPLEMENTED" },
+  );
+}
 
-  // Backend recruiter company APIs are not connected yet.
-  return structuredClone(RECRUITER_COMPANY_MOCK);
+export async function updateRecruiterCompany() {
+  throw new RecruiterCompanyServiceError(
+    "Company profile changes cannot be saved until the backend recruiter company endpoint is implemented.",
+    { code: "API_NOT_IMPLEMENTED" },
+  );
 }

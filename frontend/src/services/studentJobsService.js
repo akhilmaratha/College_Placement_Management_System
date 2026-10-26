@@ -1,12 +1,3 @@
-/**
- * Student jobs listing data access.
- *
- * TODO: Wire to a jobs listing API when the contract exists.
- * Until then, returns isolated mock UI data — not a confirmed contract.
- */
-
-import { STUDENT_JOBS_MOCK } from "@/features/student-jobs/data/studentJobsMockData";
-
 export class StudentJobsServiceError extends Error {
   constructor(message, { code = "JOBS_ERROR" } = {}) {
     super(message);
@@ -15,13 +6,23 @@ export class StudentJobsServiceError extends Error {
   }
 }
 
-/**
- * Loads jobs for the student browse page.
- * @returns {Promise<typeof STUDENT_JOBS_MOCK>}
- */
 export async function fetchStudentJobs() {
-  await new Promise((resolve) => setTimeout(resolve, 350));
+  throw new StudentJobsServiceError(
+    "Job listings are unavailable because the backend student jobs endpoint has not been implemented yet.",
+    { code: "API_NOT_IMPLEMENTED" },
+  );
+}
 
-  // Backend jobs APIs are not connected yet.
-  return structuredClone(STUDENT_JOBS_MOCK);
+export async function fetchStudentJob() {
+  throw new StudentJobsServiceError(
+    "Job details are unavailable because the backend student jobs endpoint has not been implemented yet.",
+    { code: "API_NOT_IMPLEMENTED" },
+  );
+}
+
+export async function applyToStudentJob() {
+  throw new StudentJobsServiceError(
+    "Applications cannot be submitted until the backend application endpoint is implemented.",
+    { code: "API_NOT_IMPLEMENTED" },
+  );
 }

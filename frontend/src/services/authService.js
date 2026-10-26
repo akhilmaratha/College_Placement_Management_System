@@ -1,8 +1,8 @@
 /**
  * Auth service — login, password recovery, and session entry points for CampusPlacements.
  *
- * TODO: Wire to the agreed backend auth endpoint once the API contract exists.
- * Do not invent a production request/response shape here.
+ * The backend currently has no authentication controller or agreed API contract.
+ * Keep these entry points fail-closed until those endpoints are implemented.
  * Do not store passwords in localStorage or sessionStorage.
  * Remember-email only is handled in the login form UI.
  */
@@ -93,13 +93,8 @@ export async function login(credentials) {
     });
   }
 
-  // Brief delay so the UI loading state is observable while auth is still a stub.
-  await new Promise((resolve) => setTimeout(resolve, 400));
-
-  // Backend authentication is not connected yet.
-  // Reject clearly — never fake a successful login.
   throw new AuthServiceError(
-    "Sign-in is unavailable until the authentication service is connected. Please try again later.",
+    "Sign-in is unavailable because the backend authentication endpoint is not implemented yet. Please try again later.",
     { code: "AUTH_NOT_READY" },
   );
 }
@@ -119,13 +114,8 @@ export async function requestPasswordReset(payload) {
     });
   }
 
-  // Brief delay so the UI loading state is observable while recovery is still a stub.
-  await new Promise((resolve) => setTimeout(resolve, 400));
-
-  // Backend password recovery is not connected yet.
-  // Reject clearly — never pretend a reset email was sent.
   throw new AuthServiceError(
-    "Password recovery is unavailable until the authentication service is connected. Please try again later.",
+    "Password recovery is unavailable because the backend reset endpoint is not implemented yet. Please try again later.",
     { code: "AUTH_NOT_READY" },
   );
 }

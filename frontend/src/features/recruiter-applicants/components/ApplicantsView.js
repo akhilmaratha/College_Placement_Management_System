@@ -67,9 +67,7 @@ export default function ApplicantsView() {
   const [statusFilter, setStatusFilter] = useState("All");
   const [selected, setSelected] = useState(null);
   const [confirmAction, setConfirmAction] = useState(null);
-  const [mockNotice, setMockNotice] = useState(
-    "Showing mock applicants. Status changes update local UI only — nothing is saved to a backend.",
-  );
+  const [mockNotice, setMockNotice] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -149,6 +147,11 @@ export default function ApplicantsView() {
   }, [applicants, search, jobFilter, statusFilter]);
 
   function applyStatusChange(applicantId, nextStatus) {
+    if (error) {
+      setActionError("Applicant actions are unavailable until the backend endpoint is implemented.");
+      setConfirmAction(null);
+      return;
+    }
     const target = applicants.find((item) => item.id === applicantId);
     if (!target) {
       setActionError("Applicant not found. Refresh and try again.");

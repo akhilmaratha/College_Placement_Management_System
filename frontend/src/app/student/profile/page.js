@@ -1,27 +1,4 @@
-import Link from "next/link";
+"use client";
 import StudentShell from "@/components/layout/StudentShell";
-
-export const metadata = {
-  title: "My Profile | CampusPlacements",
-  description: "Manage your student placement profile.",
-};
-
-/** Placeholder route so student navigation and profile links resolve cleanly. */
-export default function StudentProfilePlaceholderPage() {
-  return (
-    <StudentShell title="My Profile" breadcrumb="Student / My Profile">
-      <div className="mx-auto max-w-2xl rounded-[12px] border border-border bg-card p-8 text-center shadow-sm">
-        <h2 className="text-xl font-semibold text-foreground">My Profile</h2>
-        <p className="mt-2 text-sm text-secondary-text">
-          Profile editing will be available in a later phase.
-        </p>
-        <Link
-          href="/student/dashboard"
-          className="mt-6 inline-flex rounded-[10px] bg-primary px-4 py-2.5 text-sm font-semibold text-white outline-none transition hover:bg-primary-hover focus-visible:ring-2 focus-visible:ring-primary/40"
-        >
-          Back to Overview
-        </Link>
-      </div>
-    </StudentShell>
-  );
-}
+import { StudentUnavailableState } from "@/components/student/StudentState";
+export default function StudentProfilePage() { return <StudentShell title="My Profile" breadcrumb="Student / My Profile"><div className="mx-auto flex w-full max-w-5xl flex-col gap-6"><div><h2 className="text-2xl font-semibold tracking-tight">My Profile</h2><p className="mt-1 text-sm text-secondary-text">Personal, academic, skills, and resume information will appear here when the profile API is available.</p></div><StudentUnavailableState message="Profile editing and saving are unavailable because the backend does not currently expose student profile endpoints. No changes were submitted." /></div></StudentShell>; }

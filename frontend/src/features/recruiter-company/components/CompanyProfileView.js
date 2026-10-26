@@ -97,9 +97,7 @@ export default function CompanyProfileView() {
   const [values, setValues] = useState({ ...EMPTY_FORM });
   const [fieldErrors, setFieldErrors] = useState({});
   const [saving, setSaving] = useState(false);
-  const [mockNotice, setMockNotice] = useState(
-    "Showing mock company profile. Edit and Save update local UI only — nothing is saved to a backend.",
-  );
+  const [mockNotice, setMockNotice] = useState("");
 
   useEffect(() => {
     let cancelled = false;

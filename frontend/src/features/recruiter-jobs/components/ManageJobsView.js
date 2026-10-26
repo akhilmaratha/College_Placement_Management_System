@@ -50,9 +50,7 @@ export default function ManageJobsView() {
   const [formMode, setFormMode] = useState("create");
   const [editingJob, setEditingJob] = useState(null);
   const [viewJob, setViewJob] = useState(null);
-  const [mockNotice, setMockNotice] = useState(
-    "Showing mock recruiter jobs. Create, edit, and close update local UI only — nothing is saved to a backend.",
-  );
+  const [mockNotice, setMockNotice] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -130,6 +128,9 @@ export default function ManageJobsView() {
   }
 
   function handleFormSubmit(values) {
+    if (error) {
+      return;
+    }
     if (formMode === "edit" && editingJob) {
       setJobs((prev) =>
         prev.map((job) =>
@@ -185,6 +186,7 @@ export default function ManageJobsView() {
         <button
           type="button"
           onClick={openCreate}
+          disabled={loading || Boolean(error)}
           className="inline-flex items-center gap-1.5 rounded-[10px] bg-primary px-3 py-2 text-sm font-semibold text-white outline-none transition hover:bg-primary-hover focus-visible:ring-2 focus-visible:ring-primary/40"
         >
           <Plus className="h-4 w-4" aria-hidden="true" />
@@ -207,6 +209,7 @@ export default function ManageJobsView() {
           <button
             type="button"
             onClick={openCreate}
+            disabled={loading || Boolean(error)}
             className="inline-flex items-center justify-center gap-1.5 rounded-[10px] bg-primary px-4 py-2.5 text-sm font-semibold text-white outline-none transition hover:bg-primary-hover focus-visible:ring-2 focus-visible:ring-primary/40 sm:hidden"
           >
             <Plus className="h-4 w-4" aria-hidden="true" />

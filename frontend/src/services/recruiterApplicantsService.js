@@ -5,8 +5,6 @@
  * Mutations intentionally stay client-side — never pretend a backend save succeeded.
  */
 
-import { RECRUITER_APPLICANTS_MOCK } from "@/features/recruiter-applicants/data/recruiterApplicantsMockData";
-
 export class RecruiterApplicantsServiceError extends Error {
   constructor(message, { code = "RECRUITER_APPLICANTS_ERROR" } = {}) {
     super(message);
@@ -20,8 +18,15 @@ export class RecruiterApplicantsServiceError extends Error {
  * @returns {Promise<typeof RECRUITER_APPLICANTS_MOCK>}
  */
 export async function fetchRecruiterApplicants() {
-  await new Promise((resolve) => setTimeout(resolve, 350));
+  throw new RecruiterApplicantsServiceError(
+    "Applicants are unavailable because the backend recruiter applicants endpoint has not been implemented yet.",
+    { code: "API_NOT_IMPLEMENTED" },
+  );
+}
 
-  // Backend recruiter applicant APIs are not connected yet.
-  return structuredClone(RECRUITER_APPLICANTS_MOCK);
+export async function updateRecruiterApplicantStatus() {
+  throw new RecruiterApplicantsServiceError(
+    "Applicant status cannot be changed until the backend recruiter applicants endpoint is implemented.",
+    { code: "API_NOT_IMPLEMENTED" },
+  );
 }

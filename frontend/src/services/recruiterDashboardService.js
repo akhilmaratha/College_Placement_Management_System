@@ -5,8 +5,6 @@
  * Until then, returns isolated demo UI data — not a confirmed contract.
  */
 
-import { RECRUITER_DASHBOARD_MOCK } from "@/features/recruiter-dashboard/data/recruiterDashboardMockData";
-
 export class RecruiterDashboardServiceError extends Error {
   constructor(message, { code = "RECRUITER_DASHBOARD_ERROR" } = {}) {
     super(message);
@@ -20,10 +18,8 @@ export class RecruiterDashboardServiceError extends Error {
  * @returns {Promise<typeof RECRUITER_DASHBOARD_MOCK>}
  */
 export async function fetchRecruiterDashboard() {
-  // Brief delay so loading UI is observable while APIs are unavailable.
-  await new Promise((resolve) => setTimeout(resolve, 350));
-
-  // Backend recruiter dashboard APIs are not connected yet.
-  // Return demo UI data only — never invent a production response shape.
-  return structuredClone(RECRUITER_DASHBOARD_MOCK);
+  throw new RecruiterDashboardServiceError(
+    "Recruiter dashboard data is unavailable because the backend recruiter dashboard endpoint has not been implemented yet.",
+    { code: "API_NOT_IMPLEMENTED" },
+  );
 }

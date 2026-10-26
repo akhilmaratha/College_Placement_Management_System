@@ -5,8 +5,6 @@
  * Mutations intentionally stay client-side — never pretend a backend save succeeded.
  */
 
-import { RECRUITER_JOBS_MOCK } from "@/features/recruiter-jobs/data/recruiterJobsMockData";
-
 export class RecruiterJobsServiceError extends Error {
   constructor(message, { code = "RECRUITER_JOBS_ERROR" } = {}) {
     super(message);
@@ -20,8 +18,29 @@ export class RecruiterJobsServiceError extends Error {
  * @returns {Promise<typeof RECRUITER_JOBS_MOCK>}
  */
 export async function fetchRecruiterJobs() {
-  await new Promise((resolve) => setTimeout(resolve, 350));
+  throw new RecruiterJobsServiceError(
+    "Recruiter jobs are unavailable because the backend recruiter jobs endpoint has not been implemented yet.",
+    { code: "API_NOT_IMPLEMENTED" },
+  );
+}
 
-  // Backend recruiter job APIs are not connected yet.
-  return structuredClone(RECRUITER_JOBS_MOCK);
+export async function createRecruiterJob() {
+  throw new RecruiterJobsServiceError(
+    "Jobs cannot be created until the backend recruiter jobs endpoint is implemented.",
+    { code: "API_NOT_IMPLEMENTED" },
+  );
+}
+
+export async function updateRecruiterJob() {
+  throw new RecruiterJobsServiceError(
+    "Jobs cannot be updated until the backend recruiter jobs endpoint is implemented.",
+    { code: "API_NOT_IMPLEMENTED" },
+  );
+}
+
+export async function closeRecruiterJob() {
+  throw new RecruiterJobsServiceError(
+    "Jobs cannot be closed until the backend recruiter jobs endpoint is implemented.",
+    { code: "API_NOT_IMPLEMENTED" },
+  );
 }
