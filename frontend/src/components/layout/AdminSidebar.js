@@ -23,15 +23,11 @@ const NAV_ITEMS = [
     label: "Overview",
     icon: LayoutDashboard,
   },
+  { href: "/admin/users", label: "Users", icon: Users },
   {
-    label: "Students",
-    icon: Users,
-    disabled: true,
-  },
-  {
+    href: "/admin/companies",
     label: "Companies",
     icon: Building2,
-    disabled: true,
   },
   {
     label: "Job Openings",

@@ -1,4 +1,4 @@
-import PlacementStudentsView from "@/features/placement-students/components/PlacementStudentsView";
+import { redirect } from "next/navigation";
 
 export const metadata = {
   title: "Student Management | CampusPlacements",
@@ -6,6 +6,4 @@ export const metadata = {
     "Placement officer directory of registered students, academic profiles, and placement status.",
 };
 
-export default function PlacementStudentsPage() {
-  return <PlacementStudentsView />;
-}
+export default function PlacementStudentsPage() { redirect("/placement-officer/students"); }

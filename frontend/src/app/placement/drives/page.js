@@ -1,4 +1,4 @@
-import PlacementDrivesView from "@/features/placement-drives/components/PlacementDrivesView";
+import { redirect } from "next/navigation";
 
 export const metadata = {
   title: "Placement Drives | CampusPlacements",
@@ -6,6 +6,4 @@ export const metadata = {
     "Manage campus placement drives, eligibility, and application deadlines.",
 };
 
-export default function PlacementDrivesPage() {
-  return <PlacementDrivesView />;
-}
+export default function PlacementDrivesPage() { redirect("/placement-officer/drives"); }

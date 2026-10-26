@@ -1,11 +1,8 @@
 /**
  * Admin dashboard data access.
  *
- * TODO: Wire to backend admin placement endpoints when the API contract exists.
- * Until then, returns isolated demo UI data — not a confirmed contract.
+ * The Spring Boot backend does not currently expose admin dashboard endpoints.
  */
-
-import { ADMIN_DASHBOARD_MOCK } from "@/features/admin-dashboard/data/adminDashboardMockData";
 
 export class AdminDashboardServiceError extends Error {
   constructor(message, { code = "ADMIN_DASHBOARD_ERROR" } = {}) {
@@ -20,10 +17,8 @@ export class AdminDashboardServiceError extends Error {
  * @returns {Promise<typeof ADMIN_DASHBOARD_MOCK>}
  */
 export async function fetchAdminDashboard() {
-  // Brief delay so loading UI is observable while APIs are unavailable.
-  await new Promise((resolve) => setTimeout(resolve, 350));
-
-  // Backend admin placement APIs are not connected yet.
-  // Return demo UI data only — never invent a production response shape.
-  return structuredClone(ADMIN_DASHBOARD_MOCK);
+  throw new AdminDashboardServiceError(
+    "Admin dashboard data is unavailable because the backend does not expose admin dashboard endpoints yet.",
+    { code: "BACKEND_ENDPOINT_MISSING" },
+  );
 }

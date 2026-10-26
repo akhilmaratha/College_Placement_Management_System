@@ -1,4 +1,4 @@
-import InterviewsView from "@/features/placement-interviews/components/InterviewsView";
+import { redirect } from "next/navigation";
 
 export const metadata = {
   title: "Interviews | CampusPlacements",
@@ -6,6 +6,4 @@ export const metadata = {
     "Schedule and manage student interviews for campus placement drives.",
 };
 
-export default function PlacementInterviewsPage() {
-  return <InterviewsView />;
-}
+export default function PlacementInterviewsPage() { redirect("/placement-officer/interviews"); }

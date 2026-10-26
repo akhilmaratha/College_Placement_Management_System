@@ -1,11 +1,6 @@
 /**
- * Admin settings data access (UI mock only).
- *
- * TODO: Wire to admin settings APIs when contracts exist.
- * Mutations intentionally stay client-side — never pretend a backend save succeeded.
+ * The Spring Boot backend does not currently expose admin settings endpoints.
  */
-
-import { ADMIN_SETTINGS_MOCK } from "@/features/admin-settings/data/adminSettingsMockData";
 
 export class AdminSettingsServiceError extends Error {
   constructor(message, { code = "ADMIN_SETTINGS_ERROR" } = {}) {
@@ -20,8 +15,8 @@ export class AdminSettingsServiceError extends Error {
  * @returns {Promise<typeof ADMIN_SETTINGS_MOCK>}
  */
 export async function fetchAdminSettings() {
-  await new Promise((resolve) => setTimeout(resolve, 350));
-
-  // Backend admin settings APIs are not connected yet.
-  return structuredClone(ADMIN_SETTINGS_MOCK);
+  throw new AdminSettingsServiceError(
+    "Admin settings are unavailable because the backend does not expose admin settings or profile endpoints yet.",
+    { code: "BACKEND_ENDPOINT_MISSING" },
+  );
 }

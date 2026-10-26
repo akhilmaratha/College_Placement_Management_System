@@ -1,11 +1,8 @@
 /**
  * Admin placement reports data access.
  *
- * TODO: Wire to backend admin report endpoints when the API contract exists.
- * Until then, returns isolated demo UI data — not a confirmed contract.
+ * The Spring Boot backend does not currently expose admin report endpoints.
  */
-
-import { ADMIN_REPORTS_MOCK } from "@/features/admin-reports/data/adminReportsMockData";
 
 export class AdminReportsServiceError extends Error {
   constructor(message, { code = "ADMIN_REPORTS_ERROR" } = {}) {
@@ -20,10 +17,8 @@ export class AdminReportsServiceError extends Error {
  * @returns {Promise<typeof ADMIN_REPORTS_MOCK>}
  */
 export async function fetchAdminReports() {
-  // Brief delay so loading UI is observable while APIs are unavailable.
-  await new Promise((resolve) => setTimeout(resolve, 350));
-
-  // Backend admin report APIs are not connected yet.
-  // Return demo UI data only — never invent a production response shape.
-  return structuredClone(ADMIN_REPORTS_MOCK);
+  throw new AdminReportsServiceError(
+    "Placement reports are unavailable because the backend does not expose admin report endpoints yet.",
+    { code: "BACKEND_ENDPOINT_MISSING" },
+  );
 }

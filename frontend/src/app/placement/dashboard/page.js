@@ -1,4 +1,4 @@
-import PlacementOfficerDashboardView from "@/features/placement-dashboard/components/PlacementOfficerDashboardView";
+import { redirect } from "next/navigation";
 
 export const metadata = {
   title: "Placement Overview | CampusPlacements",
@@ -6,6 +6,4 @@ export const metadata = {
     "Placement officer overview of students, drives, applications, and outcomes.",
 };
 
-export default function PlacementDashboardPage() {
-  return <PlacementOfficerDashboardView />;
-}
+export default function PlacementDashboardPage() { redirect("/placement-officer/dashboard"); }
