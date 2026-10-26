@@ -15,22 +15,22 @@ import {
 
 const NAV_ITEMS = [
   {
-    href: "/placement/dashboard",
+    href: "/placement-officer/dashboard",
     label: "Overview",
     icon: LayoutDashboard,
   },
   {
-    href: "/placement/students",
+    href: "/placement-officer/students",
     label: "Students",
     icon: Users,
   },
   {
-    href: "/placement/drives",
+    href: "/placement-officer/drives",
     label: "Placement Drives",
     icon: CalendarDays,
   },
   {
-    href: "/placement/interviews",
+    href: "/placement-officer/interviews",
     label: "Interviews",
     icon: CalendarClock,
   },
@@ -66,7 +66,7 @@ export default function PlacementOfficerSidebar({ open = false, onClose }) {
       >
         <div className="flex items-center justify-between border-b border-border px-5 py-4">
           <Link
-            href="/placement/dashboard"
+            href="/placement-officer/dashboard"
             className="flex min-w-0 items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
             onClick={onClose}
           >

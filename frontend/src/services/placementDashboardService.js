@@ -1,11 +1,8 @@
 /**
  * Placement officer dashboard data access.
  *
- * TODO: Wire to backend placement officer overview endpoints when the API contract exists.
- * Until then, returns isolated demo UI data — not a confirmed contract.
+ * The Spring Boot backend does not currently expose a placement dashboard endpoint.
  */
-
-import { PLACEMENT_DASHBOARD_MOCK } from "@/features/placement-dashboard/data/placementDashboardMockData";
 
 export class PlacementDashboardServiceError extends Error {
   constructor(message, { code = "PLACEMENT_DASHBOARD_ERROR" } = {}) {
@@ -20,10 +17,8 @@ export class PlacementDashboardServiceError extends Error {
  * @returns {Promise<typeof PLACEMENT_DASHBOARD_MOCK>}
  */
 export async function fetchPlacementDashboard() {
-  // Brief delay so loading UI is observable while APIs are unavailable.
-  await new Promise((resolve) => setTimeout(resolve, 350));
-
-  // Backend placement officer dashboard APIs are not connected yet.
-  // Return demo UI data only — never invent a production response shape.
-  return structuredClone(PLACEMENT_DASHBOARD_MOCK);
+  throw new PlacementDashboardServiceError(
+    "Placement dashboard data is unavailable because the backend does not expose a placement officer dashboard endpoint yet.",
+    { code: "BACKEND_ENDPOINT_MISSING" },
+  );
 }

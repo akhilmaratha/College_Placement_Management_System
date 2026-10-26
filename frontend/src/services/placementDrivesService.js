@@ -1,11 +1,6 @@
 /**
- * Placement officer drives data access (UI mock only).
- *
- * TODO: Wire to placement drive APIs when contracts exist.
- * Mutations intentionally stay client-side — never pretend a backend save succeeded.
+ * The Spring Boot backend does not currently expose placement drive endpoints.
  */
-
-import { PLACEMENT_DRIVES_MOCK } from "@/features/placement-drives/data/placementDrivesMockData";
 
 export class PlacementDrivesServiceError extends Error {
   constructor(message, { code = "PLACEMENT_DRIVES_ERROR" } = {}) {
@@ -20,8 +15,8 @@ export class PlacementDrivesServiceError extends Error {
  * @returns {Promise<typeof PLACEMENT_DRIVES_MOCK>}
  */
 export async function fetchPlacementDrives() {
-  await new Promise((resolve) => setTimeout(resolve, 350));
-
-  // Backend placement drive APIs are not connected yet.
-  return structuredClone(PLACEMENT_DRIVES_MOCK);
+  throw new PlacementDrivesServiceError(
+    "Placement drives are unavailable because the backend does not expose placement officer drive endpoints yet.",
+    { code: "BACKEND_ENDPOINT_MISSING" },
+  );
 }

@@ -42,7 +42,7 @@ export function getDashboardPathForRole(role) {
     case ROLES.RECRUITER:
       return "/recruiter/dashboard";
     case ROLES.PLACEMENT_OFFICER:
-      return "/placement/dashboard";
+      return "/placement-officer/dashboard";
     case ROLES.ADMIN:
       return "/admin/dashboard";
     default:

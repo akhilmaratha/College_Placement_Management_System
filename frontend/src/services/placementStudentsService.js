@@ -1,12 +1,8 @@
 /**
  * Placement officer student management data access.
  *
- * TODO: Wire to backend placement student endpoints when the API contract exists.
- * Until then, returns isolated demo UI data — not a confirmed contract.
- * No create/update/delete helpers: inventing persistence would mislead operators.
+ * The Spring Boot backend does not currently expose placement student endpoints.
  */
-
-import { PLACEMENT_STUDENTS_MOCK } from "@/features/placement-students/data/placementStudentsMockData";
 
 export class PlacementStudentsServiceError extends Error {
   constructor(message, { code = "PLACEMENT_STUDENTS_ERROR" } = {}) {
@@ -21,10 +17,8 @@ export class PlacementStudentsServiceError extends Error {
  * @returns {Promise<typeof PLACEMENT_STUDENTS_MOCK>}
  */
 export async function fetchPlacementStudents() {
-  // Brief delay so loading UI is observable while APIs are unavailable.
-  await new Promise((resolve) => setTimeout(resolve, 350));
-
-  // Backend placement student APIs are not connected yet.
-  // Return demo UI data only — never invent a production response shape.
-  return structuredClone(PLACEMENT_STUDENTS_MOCK);
+  throw new PlacementStudentsServiceError(
+    "Student data is unavailable because the backend does not expose a placement officer student endpoint yet.",
+    { code: "BACKEND_ENDPOINT_MISSING" },
+  );
 }
