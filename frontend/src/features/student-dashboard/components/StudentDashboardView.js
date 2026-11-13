@@ -11,6 +11,7 @@ import {
   fetchStudentDashboard,
   StudentDashboardServiceError,
 } from "@/services/studentDashboardService";
+import { fetchStudentProfile } from "@/services/studentProfileService";
 
 function formatAppliedDate(isoDate) {
   if (!isoDate) {
@@ -62,6 +63,8 @@ function EmptyState({ message }) {
 
 export default function StudentDashboardView() {
   const [data, setData] = useState(null);
+  const [studentProfile, setStudentProfile] = useState(null);
+  const [profileError, setProfileError] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -92,6 +95,12 @@ export default function StudentDashboardView() {
       }
     }
 
+    fetchStudentProfile().then((profileResult) => {
+      if (!cancelled) setStudentProfile(profileResult);
+    }).catch((err) => {
+      if (!cancelled) setProfileError(err?.message ?? "Profile details are unavailable.");
+    });
+
     load();
 
     return () => {
@@ -99,9 +108,9 @@ export default function StudentDashboardView() {
     };
   }, []);
 
-  const student = data?.student;
+  const student = data?.student ?? (studentProfile ? { displayName: studentProfile.fullName, email: studentProfile.email } : null);
   const summary = data?.summary;
-  const profile = data?.profileCompletion;
+  const profile = studentProfile ? { complete: studentProfile.profileComplete } : null;
   const opportunities = data?.eligibleOpportunities ?? [];
   const applications = data?.recentApplications ?? [];
   const interviews = data?.upcomingInterviews ?? [];
@@ -176,45 +185,16 @@ export default function StudentDashboardView() {
               <div>
                 <div className="mb-2 flex items-center justify-between gap-3">
                   <p className="text-sm font-medium text-foreground">
-                    {profile.percent}% complete
+                    {profile.complete ? "Profile complete" : "Profile incomplete"}
                   </p>
                   <p className="text-xs text-secondary-text">
-                    Keep your profile updated for eligibility matching
+                    {profile.complete ? "Your saved profile is marked complete." : "Review your profile details."}
                   </p>
-                </div>
-                <div
-                  className="h-2.5 overflow-hidden rounded-full bg-border"
-                  role="progressbar"
-                  aria-valuenow={profile.percent}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                  aria-label="Profile completion"
-                >
-                  <div
-                    className="h-full rounded-full bg-primary transition-all"
-                    style={{ width: `${Math.min(100, Math.max(0, profile.percent))}%` }}
-                  />
                 </div>
               </div>
-              {profile.missingDetails?.length ? (
-                <div>
-                  <p className="text-sm font-medium text-foreground">
-                    Missing details
-                  </p>
-                  <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-secondary-text">
-                    {profile.missingDetails.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-              ) : (
-                <p className="text-sm text-secondary-text">
-                  Your profile looks complete. You can still review details anytime.
-                </p>
-              )}
             </div>
           ) : (
-            <EmptyState message="Profile completion data is unavailable." />
+            <EmptyState message={profileError || "Profile completion data is unavailable."} />
           )}
         </SectionCard>
 

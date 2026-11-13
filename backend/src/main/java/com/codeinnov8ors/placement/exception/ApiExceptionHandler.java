@@ -22,6 +22,11 @@ public class ApiExceptionHandler {
 		return ResponseEntity.badRequest().body(Map.of("error", exception.getMessage()));
 	}
 
+	@ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+	ResponseEntity<Map<String, String>> forbidden(org.springframework.security.access.AccessDeniedException exception) {
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", exception.getMessage()));
+	}
+
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	ResponseEntity<Map<String, String>> validation(MethodArgumentNotValidException exception) {
 		String message = exception.getBindingResult().getFieldErrors().stream()
