@@ -6,6 +6,7 @@ import {
   BarChart3,
   CalendarClock,
   CalendarDays,
+  Building2,
   GraduationCap,
   LayoutDashboard,
   LogOut,
@@ -23,6 +24,11 @@ const NAV_ITEMS = [
     href: "/placement-officer/students",
     label: "Students",
     icon: Users,
+  },
+  {
+    href: "/placement-officer/companies",
+    label: "Companies",
+    icon: Building2,
   },
   {
     href: "/placement-officer/drives",

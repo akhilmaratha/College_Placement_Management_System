@@ -1,32 +1,34 @@
-/**
- * Recruiter company profile data access (UI mock only).
- *
- * TODO: Wire to recruiter company profile APIs when contracts exist.
- * Mutations intentionally stay client-side — never pretend a backend save succeeded.
- */
+import { getApiBaseUrl } from "@/lib/api";
 
 export class RecruiterCompanyServiceError extends Error {
-  constructor(message, { code = "RECRUITER_COMPANY_ERROR" } = {}) {
-    super(message);
-    this.name = "RecruiterCompanyServiceError";
-    this.code = code;
-  }
+  constructor(message, { status = null } = {}) { super(message); this.name = "RecruiterCompanyServiceError"; this.status = status; }
 }
 
-/**
- * Loads the recruiter company profile for the company page.
- * @returns {Promise<typeof RECRUITER_COMPANY_MOCK>}
- */
+async function request(path, options = {}) {
+  let response;
+  try { response = await fetch(`${getApiBaseUrl()}${path}`, { credentials: "include", cache: "no-store", ...options }); }
+  catch { throw new RecruiterCompanyServiceError("Could not reach the recruiter company service."); }
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok) throw new RecruiterCompanyServiceError(body.error ?? `Company request failed (${response.status}).`, { status: response.status });
+  return body;
+}
+
+function mapCompany(c) {
+  return { ...c, website: c.websiteUrl ?? "", industry: c.industrySector ?? "", phone: c.contactPhone ?? "" };
+}
+
 export async function fetchRecruiterCompany() {
-  throw new RecruiterCompanyServiceError(
-    "Company profile data is unavailable because the backend recruiter company endpoint has not been implemented yet.",
-    { code: "API_NOT_IMPLEMENTED" },
-  );
+  const recruiter = await request("/api/recruiters/me");
+  const company = mapCompany(await request(`/api/companies/${recruiter.companyId}`));
+  return { recruiter: { ...recruiter, company: company.name }, company };
 }
 
-export async function updateRecruiterCompany() {
-  throw new RecruiterCompanyServiceError(
-    "Company profile changes cannot be saved until the backend recruiter company endpoint is implemented.",
-    { code: "API_NOT_IMPLEMENTED" },
-  );
+export async function updateRecruiterCompany(companyId, values) {
+  const company = await request(`/api/companies/${companyId}`, {
+    method: "PUT", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name: values.name, logoUrl: values.logoUrl || null, websiteUrl: values.website || null,
+      industrySector: values.industry, location: values.location, description: values.description || null,
+      contactEmail: values.contactEmail, contactPhone: values.phone || null }),
+  });
+  return mapCompany(company);
 }

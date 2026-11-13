@@ -17,6 +17,13 @@ const STATUS_STYLES = {
   Placed: "bg-success-bg text-success border-success/25",
   "In Process": "bg-warning-bg text-warning border-warning/25",
   Unplaced: "bg-background text-secondary-text border-border",
+  PENDING: "bg-warning-bg text-warning border-warning/25",
+  VERIFIED: "bg-success-bg text-success border-success/25",
+  BLOCKED: "bg-error-bg text-error border-error/25",
+  ACTIVE: "bg-success-bg text-success border-success/25",
+  INACTIVE: "bg-background text-secondary-text border-border",
+  LOCKED: "bg-error-bg text-error border-error/25",
+  PENDING_VERIFICATION: "bg-warning-bg text-warning border-warning/25",
 };
 
 export default function StatusBadge({ status }) {

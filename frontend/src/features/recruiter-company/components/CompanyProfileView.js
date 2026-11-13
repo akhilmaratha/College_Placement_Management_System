@@ -16,6 +16,7 @@ import StatusBadge from "@/components/ui/StatusBadge";
 import {
   fetchRecruiterCompany,
   RecruiterCompanyServiceError,
+  updateRecruiterCompany,
 } from "@/services/recruiterCompanyService";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -64,21 +65,6 @@ function deriveInitials(name) {
   return `${parts[0][0] ?? ""}${parts[1][0] ?? ""}`.toUpperCase();
 }
 
-function deriveProfileStatus(values) {
-  const required = [
-    values.name,
-    values.website,
-    values.industry,
-    values.location,
-    values.description,
-    values.contactEmail,
-    values.phone,
-  ];
-  return required.every((value) => String(value ?? "").trim())
-    ? "Complete"
-    : "Draft";
-}
-
 function inputClass(error) {
   return `w-full rounded-[10px] border bg-white px-3.5 py-2.5 text-sm text-foreground outline-none transition placeholder:text-secondary-text/70 focus-visible:ring-2 focus-visible:ring-primary/30 disabled:cursor-not-allowed disabled:bg-background disabled:opacity-80 ${
     error
@@ -97,7 +83,7 @@ export default function CompanyProfileView() {
   const [values, setValues] = useState({ ...EMPTY_FORM });
   const [fieldErrors, setFieldErrors] = useState({});
   const [saving, setSaving] = useState(false);
-  const [mockNotice, setMockNotice] = useState("");
+  const [notice, setNotice] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -112,9 +98,6 @@ export default function CompanyProfileView() {
           setRecruiter(result.recruiter);
           setCompany(result.company ?? null);
           setValues(toFormValues(result.company));
-          if (result.demoNotice) {
-            setMockNotice(result.demoNotice);
-          }
         }
       } catch (err) {
         if (!cancelled) {
@@ -161,9 +144,7 @@ export default function CompanyProfileView() {
       next.name = "Company name is required.";
     }
 
-    if (!trimmedWebsite) {
-      next.website = "Website is required.";
-    } else if (!URL_PATTERN.test(trimmedWebsite)) {
+    if (trimmedWebsite && !URL_PATTERN.test(trimmedWebsite)) {
       next.website = "Enter a valid URL starting with http:// or https://.";
     }
 
@@ -179,21 +160,13 @@ export default function CompanyProfileView() {
       next.location = "Location is required.";
     }
 
-    if (!trimmedDescription) {
-      next.description = "Description is required.";
-    } else if (trimmedDescription.length < 20) {
-      next.description = "Description should be at least 20 characters.";
-    }
-
     if (!trimmedEmail) {
       next.contactEmail = "Contact email is required.";
     } else if (!EMAIL_PATTERN.test(trimmedEmail)) {
       next.contactEmail = "Enter a valid email address.";
     }
 
-    if (!trimmedPhone) {
-      next.phone = "Phone is required.";
-    } else if (!PHONE_PATTERN.test(trimmedPhone)) {
+    if (trimmedPhone && !PHONE_PATTERN.test(trimmedPhone)) {
       next.phone = "Enter a valid phone number.";
     }
 
@@ -223,22 +196,18 @@ export default function CompanyProfileView() {
     }
 
     setSaving(true);
+    setError("");
     try {
-      const nextCompany = {
-        ...company,
+      const nextCompany = await updateRecruiterCompany(company.id, {
         name: values.name.trim(),
         logoUrl: values.logoUrl.trim(),
-        logoInitials: deriveInitials(values.name.trim()),
         website: values.website.trim(),
         industry: values.industry.trim(),
         location: values.location.trim(),
         description: values.description.trim(),
         contactEmail: values.contactEmail.trim(),
         phone: values.phone.trim(),
-        profileStatus: deriveProfileStatus(values),
-      };
-
-      // Local UI update only — no backend company profile API exists.
+      });
       setCompany(nextCompany);
       setRecruiter((prev) =>
         prev
@@ -250,9 +219,9 @@ export default function CompanyProfileView() {
       );
       setValues(toFormValues(nextCompany));
       setIsEditing(false);
-      setMockNotice(
-        "Saved in this browser session only — not connected to a backend. Changes will reset on reload.",
-      );
+      setNotice("Company profile saved.");
+    } catch (err) {
+      setError(err?.message ?? "Unable to save company profile.");
     } finally {
       setSaving(false);
     }
@@ -261,8 +230,7 @@ export default function CompanyProfileView() {
   const display = isEditing ? values : toFormValues(company);
   const logoInitials =
     company?.logoInitials ?? deriveInitials(display.name || "Company");
-  const profileStatus =
-    company?.profileStatus ?? deriveProfileStatus(display);
+  const profileStatus = company?.verificationStatus ?? "PENDING";
 
   return (
     <RecruiterShell
@@ -304,12 +272,12 @@ export default function CompanyProfileView() {
           ) : null}
         </div>
 
-        {mockNotice ? (
+        {notice ? (
           <div
             role="status"
             className="rounded-[12px] border border-border bg-card px-4 py-3 text-sm text-secondary-text"
           >
-            {mockNotice}
+            {notice}
           </div>
         ) : null}
 
@@ -461,7 +429,6 @@ export default function CompanyProfileView() {
                 <Field
                   label="Website"
                   error={fieldErrors.website}
-                  required
                   htmlFor={`${formId}-website`}
                 >
                   <div className="relative">
@@ -536,7 +503,6 @@ export default function CompanyProfileView() {
               <Field
                 label="Description"
                 error={fieldErrors.description}
-                required
                 htmlFor={`${formId}-description`}
               >
                 <textarea
@@ -582,7 +548,6 @@ export default function CompanyProfileView() {
                 <Field
                   label="Phone"
                   error={fieldErrors.phone}
-                  required
                   htmlFor={`${formId}-phone`}
                 >
                   <div className="relative">
