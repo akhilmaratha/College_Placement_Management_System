@@ -128,6 +128,7 @@ export default function RecruiterDashboardView() {
   const summary = data?.summary;
   const recentJobs = data?.recentJobs ?? [];
   const recentApplicants = data?.recentApplicants ?? [];
+  const upcomingInterviews = data?.upcomingInterviews ?? [];
   const demoNotice = data?.demoNotice;
 
   return (
@@ -224,7 +225,7 @@ export default function RecruiterDashboardView() {
                   >
                     <div className="min-w-0">
                       <p className="truncate font-semibold text-foreground">
-                        {job.title}
+                        <Link href="/recruiter/jobs" className="hover:text-primary hover:underline">{job.title}</Link>
                       </p>
                       <p className="mt-0.5 text-sm text-secondary-text sm:hidden">
                         Deadline: {formatDate(job.deadline)}
@@ -282,6 +283,10 @@ export default function RecruiterDashboardView() {
               ))}
             </ul>
           )}
+        </SectionCard>
+
+        <SectionCard title="Upcoming interviews" action={<Link href="/recruiter/applicants" className="text-sm font-medium text-primary hover:underline">Manage applicants</Link>}>
+          {loading ? <LoadingBlock rows={2} /> : upcomingInterviews.length === 0 ? <EmptyState message="No upcoming interviews are scheduled for your company." /> : <ul className="divide-y divide-border">{upcomingInterviews.map((interview) => <li key={interview.id} className="flex flex-col gap-1 px-5 py-4 sm:flex-row sm:items-center sm:justify-between"><div><p className="font-semibold">{interview.studentName} · {interview.jobTitle}</p><p className="text-sm text-secondary-text">{interview.roundNumber}. {interview.roundName} · {formatDate(interview.scheduledAt)}</p></div><StatusBadge status={interview.status}/></li>)}</ul>}
         </SectionCard>
 
         <SectionCard title="Quick actions">

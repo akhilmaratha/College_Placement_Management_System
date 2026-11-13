@@ -12,4 +12,5 @@ public interface CompanyRepository extends JpaRepository<Company, Long>, JpaSpec
 	Optional<Company> findByName(String name);
 
 	boolean existsByName(String name);
+	long countByVerificationStatus(com.codeinnov8ors.placement.entity.enums.CompanyVerificationStatus status);
 }

@@ -1,25 +1,10 @@
-/**
- * Student dashboard data access.
- *
- * TODO: Wire to backend placement endpoints when the API contract exists.
- * Until then, returns isolated sample UI data — not a confirmed contract.
- */
-
-export class StudentDashboardServiceError extends Error {
-  constructor(message, { code = "DASHBOARD_ERROR" } = {}) {
-    super(message);
-    this.name = "StudentDashboardServiceError";
-    this.code = code;
-  }
-}
-
-/**
- * Loads overview data for the student dashboard.
- * @returns {Promise<typeof STUDENT_DASHBOARD_SAMPLE>}
- */
+import { getApiBaseUrl } from "@/lib/api";
+export class StudentDashboardServiceError extends Error { constructor(message) { super(message); this.name = "StudentDashboardServiceError"; } }
 export async function fetchStudentDashboard() {
-  throw new StudentDashboardServiceError(
-    "Your dashboard data is unavailable because the backend student dashboard endpoint has not been implemented yet.",
-    { code: "API_NOT_IMPLEMENTED" },
-  );
+  let response;
+  try { response = await fetch(`${getApiBaseUrl()}/api/dashboard/student`, { credentials: "include", cache: "no-store" }); }
+  catch { throw new StudentDashboardServiceError("Could not reach dashboard data."); }
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok) throw new StudentDashboardServiceError(body.error ?? `Dashboard request failed (${response.status}).`);
+  return body;
 }

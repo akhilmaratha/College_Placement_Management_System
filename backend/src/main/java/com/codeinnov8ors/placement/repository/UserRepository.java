@@ -15,4 +15,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	boolean existsByEmail(String email);
 
 	long countByRoleAndStatus(UserRole role, UserStatus status);
+	long countByRole(UserRole role);
+	java.util.List<User> findTop5ByOrderByCreatedAtDesc();
 }

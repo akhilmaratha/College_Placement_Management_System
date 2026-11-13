@@ -8,13 +8,13 @@ This directory contains the production-grade PostgreSQL DDL schema and test seed
 
 ## Database Scripts
 
-- **[`schema.sql`](file:///Users/avilashnegi/Desktop/College_Placement_Management_System/database/schema.sql):** Complete PostgreSQL DDL script creating all 15 tables, constraints, automated `updated_at` trigger functions, and performance B-Tree indexes in proper topological dependency order.
-- **[`seed-data.sql`](file:///Users/avilashnegi/Desktop/College_Placement_Management_System/database/seed-data.sql):** Realistic sample seed records covering all 4 roles, student profiles, locked academic credentials, companies, recruiters, jobs, applications, interview rounds, and accepted placement outcomes.
-- **Documentation:** See [`docs/database/logical-data-model.md`](file:///Users/avilashnegi/Desktop/College_Placement_Management_System/docs/database/logical-data-model.md) for the complete relational data dictionary and Mermaid ER diagram.
+- **[`schema.sql`](schema.sql):** PostgreSQL DDL for the application's tables, constraints, `updated_at` triggers, and indexes.
+- **[`seed-data.sql`](seed-data.sql):** Optional sample records for isolated development databases only. Do not load into production.
+- **Documentation:** See [`../docs/database/logical-data-model.md`](../docs/database/logical-data-model.md) for the relational model and ER diagram.
 
 ## How to Initialize the Database
 
-Ensure PostgreSQL 14+ is running locally, then execute:
+Ensure PostgreSQL 14+ is running locally, then execute these commands only for a new local database. For an existing or production database, review the schema and prepare a safe migration plan; do not recreate tables.
 
 ```bash
 # 1. Create the database and user (if not already created)
@@ -41,5 +41,5 @@ Configure these placeholders in your local environment (never commit real creden
 | `DB_USERNAME` | Database user | `placement_user` |
 | `DB_PASSWORD` | Database password | `change_me` |
 
-See also `backend/.env.example` for backend wiring.
+The backend accepts a full `SPRING_DATASOURCE_URL` (recommended for Neon, using `sslmode=require`) or these local `DB_*` values. See [`../backend/.env.example`](../backend/.env.example). The current environment's Neon connection and schema validation have not been verified.
 

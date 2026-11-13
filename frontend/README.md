@@ -1,47 +1,26 @@
 # Frontend
 
-Next.js (JavaScript, App Router) client for the College Placement Management System.
-
-## Stack
-
-- Next.js
-- React
-- JavaScript
-- Tailwind CSS
-- ESLint
+Next.js 16 App Router application using JavaScript, React, Tailwind CSS, and Lucide React. Role routes are grouped under `src/app/{student,recruiter,placement-officer,admin}` and guarded by the shared `ProtectedRoute`; backend authorization remains authoritative.
 
 ## Setup
 
-```bash
-cp .env.example .env
+```powershell
+Copy-Item .env.example .env.local
 npm install
 npm run dev
 ```
 
-Copy `.env.example` to `.env` and set `NEXT_PUBLIC_API_URL` to the backend base URL (default `http://localhost:8080`).
+Set `NEXT_PUBLIC_API_URL` to the backend origin (local default `http://localhost:8080`) before building. `NEXT_PUBLIC_APP_URL` documents the frontend URL. Only public values belong in variables with the `NEXT_PUBLIC_` prefix.
 
-## Scripts
+## Commands
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server |
+| Command | Purpose |
+|---|---|
+| `npm run dev` | Development server |
 | `npm run build` | Production build |
-| `npm start` | Serve production build |
-| `npm run lint` | Run ESLint |
+| `npm start` | Serve the production build |
+| `npm run lint` | ESLint |
 
-## Folder structure
+No frontend unit or browser E2E runner is configured. The API clients use credentialed requests and show service errors instead of substituting live data with mock results. A few unreferenced legacy demo-data files remain in the feature folders; they are not used by the current route flows.
 
-```text
-src/
-├── app/              # App Router routes
-├── components/       # layout, common, ui
-├── features/         # feature modules (later phases)
-├── hooks/
-├── lib/
-├── services/         # API clients (later phases)
-├── context/
-├── constants/
-└── utils/
-```
-
-Phase 1 is scaffolding only — no placement UI or API integration yet.
+See the root [`README.md`](../README.md) for API groups, role behavior, deployment guidance, verified checks, and known limitations.

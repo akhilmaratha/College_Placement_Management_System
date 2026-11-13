@@ -1,24 +1,6 @@
-/**
- * Placement officer dashboard data access.
- *
- * The Spring Boot backend does not currently expose a placement dashboard endpoint.
- */
-
-export class PlacementDashboardServiceError extends Error {
-  constructor(message, { code = "PLACEMENT_DASHBOARD_ERROR" } = {}) {
-    super(message);
-    this.name = "PlacementDashboardServiceError";
-    this.code = code;
-  }
-}
-
-/**
- * Loads overview data for the placement officer dashboard.
- * @returns {Promise<typeof PLACEMENT_DASHBOARD_MOCK>}
- */
+import { getApiBaseUrl } from "@/lib/api";
 export async function fetchPlacementDashboard() {
-  throw new PlacementDashboardServiceError(
-    "Placement dashboard data is unavailable because the backend does not expose a placement officer dashboard endpoint yet.",
-    { code: "BACKEND_ENDPOINT_MISSING" },
-  );
+  let response; try { response=await fetch(`${getApiBaseUrl()}/api/dashboard/placement-officer`,{credentials:"include",cache:"no-store"}); }
+  catch { throw new Error("Could not reach placement dashboard data."); }
+  const body=await response.json().catch(()=>({})); if(!response.ok) throw new Error(body.error??`Dashboard request failed (${response.status}).`); return body;
 }

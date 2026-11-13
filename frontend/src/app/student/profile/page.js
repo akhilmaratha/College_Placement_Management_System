@@ -21,7 +21,7 @@ export default function StudentProfilePage() {
     catch (e) { setError(e.message || "Unable to load your profile."); }
     finally { setLoading(false); }
   }, []);
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => { const timer = setTimeout(load, 0); return () => clearTimeout(timer); }, [load]);
   async function save(event) {
     event.preventDefault(); setSaving(true); setError(""); setSuccess("");
     try { const data = await updateStudentProfile(form); setProfile(data); setForm(Object.fromEntries(editable.map(([key]) => [key, data[key] ?? ""]))); setSuccess("Profile updated successfully."); }

@@ -1,24 +1,6 @@
-/**
- * Admin dashboard data access.
- *
- * The Spring Boot backend does not currently expose admin dashboard endpoints.
- */
-
-export class AdminDashboardServiceError extends Error {
-  constructor(message, { code = "ADMIN_DASHBOARD_ERROR" } = {}) {
-    super(message);
-    this.name = "AdminDashboardServiceError";
-    this.code = code;
-  }
-}
-
-/**
- * Loads overview data for the admin dashboard.
- * @returns {Promise<typeof ADMIN_DASHBOARD_MOCK>}
- */
+import { getApiBaseUrl } from "@/lib/api";
 export async function fetchAdminDashboard() {
-  throw new AdminDashboardServiceError(
-    "Admin dashboard data is unavailable because the backend does not expose admin dashboard endpoints yet.",
-    { code: "BACKEND_ENDPOINT_MISSING" },
-  );
+  let response; try { response=await fetch(`${getApiBaseUrl()}/api/dashboard/admin`,{credentials:"include",cache:"no-store"}); }
+  catch { throw new Error("Could not reach admin dashboard data."); }
+  const body=await response.json().catch(()=>({})); if(!response.ok) throw new Error(body.error??`Dashboard request failed (${response.status}).`); return body;
 }

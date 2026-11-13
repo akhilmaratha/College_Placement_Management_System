@@ -29,6 +29,12 @@ function formatAppliedDate(isoDate) {
   }
 }
 
+function formatInterviewDate(value) {
+  if (!value) return "—";
+  try { return new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value)); }
+  catch { return value; }
+}
+
 function SectionCard({ title, action, children }) {
   return (
     <section className="rounded-[12px] border border-border bg-card shadow-sm">
@@ -108,10 +114,10 @@ export default function StudentDashboardView() {
     };
   }, []);
 
-  const student = data?.student ?? (studentProfile ? { displayName: studentProfile.fullName, email: studentProfile.email } : null);
+  const student = data?.displayName ? { displayName: data.displayName } : (studentProfile ? { displayName: studentProfile.fullName, email: studentProfile.email } : null);
   const summary = data?.summary;
   const profile = studentProfile ? { complete: studentProfile.profileComplete } : null;
-  const opportunities = data?.eligibleOpportunities ?? [];
+  const opportunities = (data?.recentJobs ?? []).map((job) => ({ id: job.id, jobTitle: job.title, company: job.companyName, eligibility: "Published", deadline: job.deadline }));
   const applications = data?.recentApplications ?? [];
   const interviews = data?.upcomingInterviews ?? [];
 
@@ -142,26 +148,26 @@ export default function StudentDashboardView() {
 
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <SummaryCard
-            label="Eligible Job Drives"
-            value={summary?.eligibleJobDrives ?? "—"}
+            label="Published jobs open"
+            value={summary?.availableJobs ?? (error ? "—" : 0)}
             icon={Briefcase}
             loading={loading}
           />
           <SummaryCard
             label="Applications Submitted"
-            value={summary?.applicationsSubmitted ?? "—"}
+            value={summary?.totalApplications ?? (error ? "—" : 0)}
             icon={ClipboardList}
             loading={loading}
           />
           <SummaryCard
-            label="Interviews Scheduled"
-            value={summary?.interviewsScheduled ?? "—"}
+            label="Shortlisted"
+            value={summary?.shortlistedApplications ?? (error ? "—" : 0)}
             icon={Calendar}
             loading={loading}
           />
           <SummaryCard
-            label="Offers Received"
-            value={summary?.offersReceived ?? "—"}
+            label="Selected applications"
+            value={summary?.selectedApplications ?? (error ? "—" : 0)}
             icon={Award}
             loading={loading}
           />
@@ -199,7 +205,7 @@ export default function StudentDashboardView() {
         </SectionCard>
 
         <SectionCard
-          title="Eligible opportunities"
+          title="Open published jobs"
           action={
             <Link
               href="/student/jobs"
@@ -212,7 +218,7 @@ export default function StudentDashboardView() {
           {loading ? (
             <LoadingBlock />
           ) : opportunities.length === 0 ? (
-            <EmptyState message="No eligible job drives right now. Check Browse Jobs for new openings." />
+            <EmptyState message="No published jobs are open for applications right now. Check Browse Jobs later." />
           ) : (
             <>
               <div className="hidden border-b border-border px-5 py-2 text-xs font-medium uppercase tracking-wide text-secondary-text sm:grid sm:grid-cols-[1.4fr_1fr_0.8fr_auto] sm:gap-4">
@@ -255,11 +261,11 @@ export default function StudentDashboardView() {
                   >
                     <div className="min-w-0">
                       <p className="truncate font-semibold text-foreground">
-                        {application.jobTitle}
+                        <Link href={`/student/jobs/${application.jobId}`} className="hover:text-primary hover:underline">{application.jobTitle}</Link>
                       </p>
                       <p className="mt-0.5 truncate text-sm text-secondary-text">
-                        {application.company} · Applied{" "}
-                        {formatAppliedDate(application.appliedDate)}
+                        {application.companyName} · Applied{" "}
+                        {formatAppliedDate(application.appliedAt)}
                       </p>
                     </div>
                     <StatusBadge status={application.status} />
@@ -279,10 +285,10 @@ export default function StudentDashboardView() {
                 {interviews.map((interview) => (
                   <li key={interview.id} className="px-5 py-4">
                     <p className="font-semibold text-foreground">
-                      {interview.jobTitle}
+                      <Link href={`/student/jobs/${interview.jobId}`} className="hover:text-primary hover:underline">{interview.jobTitle}</Link>
                     </p>
                     <p className="mt-0.5 text-sm text-secondary-text">
-                      {interview.company} · {interview.scheduledAt}
+                      {interview.companyName} · {formatInterviewDate(interview.scheduledAt)}
                     </p>
                   </li>
                 ))}
