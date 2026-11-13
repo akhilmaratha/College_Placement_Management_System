@@ -1,0 +1,5 @@
+import { getApiBaseUrl } from "@/lib/api";
+export class AdminJobsServiceError extends Error { constructor(message, { status = null } = {}) { super(message); this.name = "AdminJobsServiceError"; this.status = status; } }
+async function request(path, options = {}) { let response; try { response = await fetch(`${getApiBaseUrl()}${path}`, { credentials: "include", cache: "no-store", ...options }); } catch { throw new AdminJobsServiceError("Could not reach the jobs service."); } const body = await response.json().catch(() => ({})); if (!response.ok) throw new AdminJobsServiceError(body.error ?? `Job request failed (${response.status}).`, { status: response.status }); return body; }
+export async function fetchAdminJobs({ q = "", status = "", page = 0, size = 20 } = {}) { const p = new URLSearchParams({ page: String(page), size: String(size) }); if (q.trim()) p.set("q", q.trim()); if (status) p.set("status", status); return request(`/api/jobs?${p}`); }
+export function updateAdminJobStatus(id, status) { return request(`/api/jobs/${id}/status`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status }) }); }

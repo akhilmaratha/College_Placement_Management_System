@@ -121,6 +121,8 @@ function JobFormModalInner({ mode, initialJob, onClose, onSubmit }) {
         minCgpa: values.minCgpa.trim(),
         skills: values.skills.trim(),
       });
+    } catch (error) {
+      setErrors((prev) => ({ ...prev, submit: error?.message ?? "Unable to save this job." }));
     } finally {
       setSubmitting(false);
     }
@@ -150,7 +152,7 @@ function JobFormModalInner({ mode, initialJob, onClose, onSubmit }) {
               {heading}
             </h2>
             <p className="mt-1 text-sm text-secondary-text">
-              Changes stay in this browser session only — not saved to a backend.
+              Job details are saved to your company account. Skills must match the existing skill catalog.
             </p>
           </div>
           <button
@@ -164,6 +166,7 @@ function JobFormModalInner({ mode, initialJob, onClose, onSubmit }) {
         </div>
 
         <form onSubmit={handleSubmit} noValidate className="space-y-4">
+          {errors.submit ? <p role="alert" className="rounded-lg border border-error/30 bg-error-bg px-3 py-2 text-sm text-error">{errors.submit}</p> : null}
           <Field label="Title" error={errors.title} required>
             <input
               value={values.title}

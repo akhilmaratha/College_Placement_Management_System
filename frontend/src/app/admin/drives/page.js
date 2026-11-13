@@ -1,3 +1,3 @@
-import AdminResourceView from "@/features/admin-resources/components/AdminResourceView";
+import PlacementDrivesView from "@/features/placement-drives/components/PlacementDrivesView";
 export const metadata = { title: "Placement Drives | CampusPlacements" };
-export default function AdminDrivesPage() { return <AdminResourceView resource="drives" />; }
+export default function Page() { return <PlacementDrivesView administrator />; }

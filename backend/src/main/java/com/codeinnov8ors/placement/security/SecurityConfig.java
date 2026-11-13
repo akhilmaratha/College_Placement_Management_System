@@ -61,6 +61,9 @@ public class SecurityConfig {
 						.requestMatchers("/api/recruiter/**").hasRole("RECRUITER")
 						.requestMatchers("/api/placement/**").hasAnyRole("PLACEMENT_OFFICER", "ADMIN")
 						.requestMatchers("/api/admin/**").hasRole("ADMIN")
+						.requestMatchers("/api/jobs/*/eligibility", "/api/jobs/*/applications", "/api/applications/me").hasRole("STUDENT")
+						.requestMatchers("/api/applications/*/status", "/api/applications").hasAnyRole("PLACEMENT_OFFICER", "ADMIN")
+						.requestMatchers("/api/applications/**").authenticated()
 						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 						.anyRequest().authenticated())
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

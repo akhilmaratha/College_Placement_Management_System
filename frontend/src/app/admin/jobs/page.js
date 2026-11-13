@@ -1,3 +1,3 @@
-import AdminResourceView from "@/features/admin-resources/components/AdminResourceView";
+import AdminJobsView from "@/features/admin-jobs/components/AdminJobsView";
 export const metadata = { title: "Job Openings | CampusPlacements" };
-export default function AdminJobsPage() { return <AdminResourceView resource="jobs" />; }
+export default function AdminJobsPage() { return <AdminJobsView />; }

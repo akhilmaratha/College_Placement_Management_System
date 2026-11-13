@@ -1,21 +1,22 @@
+"use client";
 import Link from "next/link";
+import { useParams } from "next/navigation";
+import { Suspense, useCallback, useEffect, useState } from "react";
+import { Building2, CalendarDays, GraduationCap, MapPin } from "lucide-react";
 import StudentShell from "@/components/layout/StudentShell";
-import { StudentUnavailableState } from "@/components/student/StudentState";
+import { StudentErrorState } from "@/components/student/StudentState";
+import { fetchStudentJob } from "@/services/studentJobsService";
+import { applyToJob, fetchEligibility, fetchStudentApplications } from "@/services/studentApplicationsService";
 
-export const metadata = {
-  title: "Job Details | CampusPlacements",
-  description: "Placement job details.",
-};
-
+function dateLabel(value) { if (!value) return "—"; const d = new Date(value); return Number.isNaN(d.valueOf()) ? value : new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }).format(d); }
 export default function StudentJobDetailsPage() {
-  return (
-    <StudentShell title="Job details" breadcrumb="Student / Job details">
-      <div className="mx-auto flex max-w-2xl flex-col gap-5">
-        <StudentUnavailableState message="Job details are unavailable because the backend does not expose a student job-details endpoint." />
-        <Link href="/student/jobs" className="self-center rounded-[10px] border border-border bg-card px-4 py-2.5 text-sm font-semibold text-primary hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
-          Back to Browse Jobs
-        </Link>
-      </div>
-    </StudentShell>
-  );
+  return <Suspense fallback={<StudentShell title="Job details" breadcrumb="Student / Browse Jobs / Details"><div className="mx-auto h-72 w-full max-w-3xl animate-pulse rounded-xl border border-border bg-card" aria-label="Loading job details" /></StudentShell>}><StudentJobDetailsContent /></Suspense>;
+}
+
+function StudentJobDetailsContent() {
+  const { id } = useParams(); const [job, setJob] = useState(null); const [eligibility, setEligibility] = useState(null); const [alreadyApplied, setAlreadyApplied] = useState(false); const [loading, setLoading] = useState(true); const [error, setError] = useState(""); const [actionError, setActionError] = useState(""); const [notice, setNotice] = useState(""); const [submitting, setSubmitting] = useState(false);
+  const load = useCallback(async () => { setLoading(true); setError(""); try { const [jobResult, eligible, applications] = await Promise.all([fetchStudentJob(id), fetchEligibility(id), fetchStudentApplications()]); setJob(jobResult); setEligibility(eligible); setAlreadyApplied(applications.some(a => String(a.jobId) === String(id))); } catch (e) { setError(e.message || "Unable to load job details."); } finally { setLoading(false); } }, [id]);
+  useEffect(() => { load(); }, [load]);
+  async function apply() { setSubmitting(true); setActionError(""); setNotice(""); try { await applyToJob(id); setAlreadyApplied(true); setNotice("Your application was submitted successfully."); } catch (e) { setActionError(e.message); } finally { setSubmitting(false); } }
+  return <StudentShell title="Job details" breadcrumb="Student / Browse Jobs / Details"><main className="mx-auto flex w-full max-w-3xl flex-col gap-5"><Link href="/student/jobs" className="self-start text-sm font-medium text-primary hover:underline">← Back to Browse Jobs</Link>{loading ? <div className="h-72 animate-pulse rounded-xl border border-border bg-card" aria-label="Loading job details"/> : error ? <StudentErrorState message={error} onRetry={load}/> : job ? <article className="rounded-xl border border-border bg-card p-6 shadow-sm sm:p-8"><p className="text-sm font-medium text-primary">{job.jobType}</p><h2 className="mt-2 text-2xl font-semibold">{job.title}</h2><p className="mt-2 flex items-center gap-2 text-secondary-text"><Building2 className="h-4 w-4"/>{job.company}</p><div className="mt-6 grid gap-4 border-y border-border py-5 text-sm sm:grid-cols-2"><p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-secondary-text"/>{job.location}</p><p className="flex items-center gap-2"><CalendarDays className="h-4 w-4 text-secondary-text"/>Apply by {dateLabel(job.deadline)}</p><p className="flex items-center gap-2"><GraduationCap className="h-4 w-4 text-secondary-text"/>Minimum CGPA {job.minCgpa}</p><p><span className="text-secondary-text">Eligible branches: </span>{job.eligibility}</p><p><span className="text-secondary-text">Maximum active backlogs: </span>{job.maxActiveBacklogs}</p>{job.batchYear ? <p><span className="text-secondary-text">Graduation year: </span>{job.batchYear}</p> : null}{job.salary ? <p><span className="text-secondary-text">Compensation: </span>{job.salary}</p> : null}</div><section className="mt-6"><h3 className="font-semibold">Role description</h3><p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-secondary-text">{job.description}</p></section>{job.skills?.length ? <section className="mt-6"><h3 className="font-semibold">Required skills</h3><p className="mt-2 text-sm text-secondary-text">{job.skills}</p></section> : null}<section className="mt-6 rounded-lg border border-border bg-background p-4"><h3 className="font-semibold">Your eligibility</h3>{eligibility ? eligibility.eligible ? <p className="mt-2 text-sm text-green-700">You meet the listed eligibility criteria.</p> : <><p className="mt-2 text-sm text-red-700">You are not currently eligible:</p><ul className="mt-1 list-inside list-disc text-sm text-red-700">{eligibility.reasons.map(reason => <li key={reason}>{reason}</li>)}</ul></> : <p className="mt-2 text-sm text-secondary-text">Eligibility could not be evaluated.</p>}</section>{actionError ? <p role="alert" className="mt-4 text-sm text-red-700">{actionError}</p> : null}{notice ? <p role="status" className="mt-4 text-sm text-green-700">{notice}</p> : null}<button type="button" onClick={apply} disabled={!eligibility?.eligible || alreadyApplied || submitting} className="mt-5 rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50">{alreadyApplied ? "Already applied" : submitting ? "Submitting…" : "Apply for this job"}</button><p className="mt-2 text-xs text-secondary-text">Applications require a selected default resume. Eligibility is checked again when you submit.</p></article> : null}</main></StudentShell>;
 }

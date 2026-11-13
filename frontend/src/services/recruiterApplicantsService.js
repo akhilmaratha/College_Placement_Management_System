@@ -1,32 +1,17 @@
-/**
- * Recruiter applicants data access (UI mock only).
- *
- * TODO: Wire to recruiter applicant APIs when contracts exist.
- * Mutations intentionally stay client-side — never pretend a backend save succeeded.
- */
+import { getApiBaseUrl } from "@/lib/api";
 
-export class RecruiterApplicantsServiceError extends Error {
-  constructor(message, { code = "RECRUITER_APPLICANTS_ERROR" } = {}) {
-    super(message);
-    this.name = "RecruiterApplicantsServiceError";
-    this.code = code;
-  }
+async function request(path, options = {}) {
+  let response;
+  try { response = await fetch(`${getApiBaseUrl()}${path}`, { credentials: "include", cache: "no-store", ...options }); }
+  catch { throw new Error("Could not reach the applicants service."); }
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(body.error ?? `Applicants request failed (${response.status}).`);
+  return body;
 }
-
-/**
- * Loads recruiter applicants for the applicants page.
- * @returns {Promise<typeof RECRUITER_APPLICANTS_MOCK>}
- */
 export async function fetchRecruiterApplicants() {
-  throw new RecruiterApplicantsServiceError(
-    "Applicants are unavailable because the backend recruiter applicants endpoint has not been implemented yet.",
-    { code: "API_NOT_IMPLEMENTED" },
-  );
+  const applications = await request("/api/recruiter/applications");
+  return { applicants: applications.map(a => ({ id: a.id, jobId: String(a.jobId), jobTitle: a.jobTitle, studentName: a.studentName, email: a.studentEmail, status: a.status, appliedAt: a.appliedAt })), jobOpenings: [...new Map(applications.map(a => [a.jobId, { id: String(a.jobId), title: a.jobTitle }])).values()] };
 }
-
-export async function updateRecruiterApplicantStatus() {
-  throw new RecruiterApplicantsServiceError(
-    "Applicant status cannot be changed until the backend recruiter applicants endpoint is implemented.",
-    { code: "API_NOT_IMPLEMENTED" },
-  );
+export function updateRecruiterApplicantStatus(id, status) {
+  return request(`/api/recruiter/applications/${encodeURIComponent(id)}/status`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status }) });
 }

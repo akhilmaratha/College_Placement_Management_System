@@ -9,6 +9,7 @@ import {
   Building2,
   GraduationCap,
   LayoutDashboard,
+  BriefcaseBusiness,
   LogOut,
   Users,
   X,
@@ -29,6 +30,11 @@ const NAV_ITEMS = [
     href: "/placement-officer/companies",
     label: "Companies",
     icon: Building2,
+  },
+  {
+    href: "/placement-officer/jobs",
+    label: "Job Openings",
+    icon: BriefcaseBusiness,
   },
   {
     href: "/placement-officer/drives",

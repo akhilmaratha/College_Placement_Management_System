@@ -12,4 +12,6 @@ public interface JobSkillRepository extends JpaRepository<JobSkill, Long> {
 	List<JobSkill> findByJobOpeningId(Long jobOpeningId);
 
 	Optional<JobSkill> findByJobOpeningIdAndSkillId(Long jobOpeningId, Long skillId);
+
+	void deleteByJobOpeningId(Long jobOpeningId);
 }
