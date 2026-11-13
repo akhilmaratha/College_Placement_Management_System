@@ -109,6 +109,8 @@ public class ApplicationService {
 
     private EligibilityResponse evaluate(JobOpening job, StudentProfile student) {
         List<String> reasons = new ArrayList<>();
+        if (job.getStatus() != JobOpeningStatus.PUBLISHED) reasons.add("Job is not published");
+        if (!job.getApplicationDeadline().isAfter(Instant.now())) reasons.add("Application deadline has passed");
         AcademicRecord record = academics.findByStudentProfileId(student.getId()).orElse(null);
         if (record == null) reasons.add("Academic record is missing");
         else {

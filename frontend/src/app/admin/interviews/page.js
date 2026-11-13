@@ -1,3 +1,3 @@
-import AdminResourceView from "@/features/admin-resources/components/AdminResourceView";
+import AdminInterviewsView from "@/features/admin-resources/components/AdminInterviewsView";
 export const metadata = { title: "Interviews | CampusPlacements" };
-export default function AdminInterviewsPage() { return <AdminResourceView resource="interviews" />; }
+export default function AdminInterviewsPage() { return <AdminInterviewsView />; }

@@ -63,6 +63,7 @@ public class SecurityConfig {
 						.requestMatchers("/api/admin/**").hasRole("ADMIN")
 						.requestMatchers("/api/jobs/*/eligibility", "/api/jobs/*/applications", "/api/applications/me").hasRole("STUDENT")
 						.requestMatchers("/api/applications/*/status", "/api/applications").hasAnyRole("PLACEMENT_OFFICER", "ADMIN")
+						.requestMatchers("/api/interviews/**").authenticated()
 						.requestMatchers("/api/applications/**").authenticated()
 						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 						.anyRequest().authenticated())

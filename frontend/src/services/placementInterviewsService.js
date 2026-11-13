@@ -1,22 +1,17 @@
-/**
- * The Spring Boot backend does not currently expose interview endpoints.
- */
+import { getApiBaseUrl } from "@/lib/api";
 
-export class PlacementInterviewsServiceError extends Error {
-  constructor(message, { code = "PLACEMENT_INTERVIEWS_ERROR" } = {}) {
-    super(message);
-    this.name = "PlacementInterviewsServiceError";
-    this.code = code;
-  }
+async function request(path, options = {}) {
+  let response;
+  try { response = await fetch(`${getApiBaseUrl()}${path}`, { credentials: "include", cache: "no-store", ...options }); }
+  catch { throw new Error("Could not reach the interview service."); }
+  const body = response.status === 204 ? null : await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(body?.error ?? `Interview request failed (${response.status}).`);
+  return body;
 }
 
-/**
- * Loads interviews for the Placement Officer Interviews management page.
- * @returns {Promise<typeof PLACEMENT_INTERVIEWS_MOCK>}
- */
-export async function fetchPlacementInterviews() {
-  throw new PlacementInterviewsServiceError(
-    "Interviews are unavailable because the backend does not expose placement officer interview endpoints yet.",
-    { code: "BACKEND_ENDPOINT_MISSING" },
-  );
-}
+export function fetchPlacementInterviews() { return request("/api/interviews"); }
+export function fetchInterviewApplications() { return request("/api/placement/applications"); }
+export function scheduleInterview(payload) { return request("/api/interviews", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }); }
+export function updateInterview(id, payload) { return request(`/api/interviews/${encodeURIComponent(id)}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }); }
+export function updateInterviewStatus(id, payload) { return request(`/api/interviews/${encodeURIComponent(id)}/status`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }); }
+export function cancelInterview(id) { return request(`/api/interviews/${encodeURIComponent(id)}`, { method: "DELETE" }); }

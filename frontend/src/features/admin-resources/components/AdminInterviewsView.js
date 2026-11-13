@@ -1,0 +1,14 @@
+"use client";
+import { useCallback, useEffect, useState } from "react";
+import AdminShell from "@/components/layout/AdminShell";
+import StatusBadge from "@/components/ui/StatusBadge";
+import AdminUnavailableState from "@/components/admin/AdminUnavailableState";
+import { cancelInterview, fetchPlacementInterviews, updateInterviewStatus } from "@/services/placementInterviewsService";
+
+export default function AdminInterviewsView() {
+  const [items, setItems] = useState([]); const [loading, setLoading] = useState(true); const [error, setError] = useState(""); const [busy, setBusy] = useState(null);
+  const load = useCallback(async () => { setLoading(true); setError(""); try { setItems(await fetchPlacementInterviews()); } catch (e) { setError(e.message); } finally { setLoading(false); } }, []);
+  useEffect(() => { load(); }, [load]);
+  async function run(id, action) { setBusy(id); setError(""); try { if (action === "cancel") await cancelInterview(id); else await updateInterviewStatus(id, { status: action }); await load(); } catch (e) { setError(e.message); } finally { setBusy(null); } }
+  return <AdminShell title="Interviews" breadcrumb="Admin / Interviews"><main className="mx-auto flex w-full max-w-6xl flex-col gap-5"><div><h2 className="text-2xl font-semibold">Interviews</h2><p className="mt-1 text-sm text-secondary-text">Review and manage interview rounds across the placement system.</p></div>{error?<AdminUnavailableState title="Interviews unavailable" message={error} onRetry={load}/>:null}{loading?<p role="status">Loading interviews…</p>:items.length?<div className="overflow-x-auto rounded-xl border border-border bg-card"><table className="w-full text-left text-sm"><thead className="bg-background"><tr>{["Student","Company / Job","Round","Schedule","Status","Result","Actions"].map(x=><th key={x} className="p-3">{x}</th>)}</tr></thead><tbody>{items.map(i=><tr key={i.id} className="border-t border-border"><td className="p-3">{i.studentName}<div className="text-xs text-secondary-text">{i.studentEmail}</div></td><td className="p-3">{i.companyName}<div className="text-xs text-secondary-text">{i.jobTitle}</div></td><td className="p-3">{i.roundNumber}. {i.roundName}</td><td className="p-3">{new Date(i.scheduledAt).toLocaleString("en-IN")}</td><td className="p-3"><StatusBadge status={i.status}/></td><td className="p-3">{i.result}</td><td className="p-3">{["Scheduled","Rescheduled"].includes(i.status)?<div className="flex gap-2"><button disabled={busy===i.id} onClick={()=>run(i.id,"Completed")} className="text-primary underline">Complete</button><button disabled={busy===i.id} onClick={()=>run(i.id,"cancel")} className="text-red-700 underline">Cancel</button></div>:"—"}</td></tr>)}</tbody></table></div>:<p className="rounded-xl border border-border bg-card p-10 text-center text-sm text-secondary-text">No interview rounds scheduled.</p>}</main></AdminShell>;
+}

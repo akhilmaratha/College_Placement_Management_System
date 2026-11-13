@@ -1,25 +1,26 @@
-/**
- * Recruiter dashboard data access.
- *
- * TODO: Wire to backend recruiter overview endpoints when the API contract exists.
- * Until then, returns isolated demo UI data — not a confirmed contract.
- */
+import { getApiBaseUrl } from "@/lib/api";
 
 export class RecruiterDashboardServiceError extends Error {
-  constructor(message, { code = "RECRUITER_DASHBOARD_ERROR" } = {}) {
-    super(message);
-    this.name = "RecruiterDashboardServiceError";
-    this.code = code;
-  }
+  constructor(message, { status = null } = {}) { super(message); this.name = "RecruiterDashboardServiceError"; this.status = status; }
 }
 
-/**
- * Loads overview data for the recruiter dashboard.
- * @returns {Promise<typeof RECRUITER_DASHBOARD_MOCK>}
- */
+async function request(path) {
+  let response;
+  try { response = await fetch(`${getApiBaseUrl()}${path}`, { credentials: "include", cache: "no-store" }); }
+  catch { throw new RecruiterDashboardServiceError("Could not reach recruiter dashboard data."); }
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok) throw new RecruiterDashboardServiceError(body.error ?? `Dashboard request failed (${response.status}).`, { status: response.status });
+  return body;
+}
+
 export async function fetchRecruiterDashboard() {
-  throw new RecruiterDashboardServiceError(
-    "Recruiter dashboard data is unavailable because the backend recruiter dashboard endpoint has not been implemented yet.",
-    { code: "API_NOT_IMPLEMENTED" },
-  );
+  const [recruiter, jobs, published] = await Promise.all([
+    request("/api/recruiters/me"), request("/api/jobs?page=0&size=5"), request("/api/jobs?status=Published&page=0&size=1"),
+  ]);
+  return {
+    recruiter: { email: recruiter.email, company: recruiter.companyName },
+    summary: { totalJobs: jobs.totalElements, publishedJobs: published.totalElements, totalApplicants: "—", interviewsScheduled: "—" },
+    recentJobs: jobs.content.map(job => ({ id: job.id, title: job.title, status: job.status, deadline: job.applicationDeadline, applicantCount: null })),
+    recentApplicants: [],
+  };
 }
